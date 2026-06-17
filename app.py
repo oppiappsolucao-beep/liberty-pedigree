@@ -21,12 +21,9 @@ def aplicar_css():
         <style>
         .stApp {
             background:
-                linear-gradient(
-                    135deg,
-                    rgba(245, 247, 245, 0.75) 0%,
-                    rgba(232, 241, 234, 0.75) 42%,
-                    rgba(213, 232, 219, 0.75) 100%
-                );
+                radial-gradient(circle at top left, rgba(212, 160, 23, 0.42) 0%, transparent 32%),
+                radial-gradient(circle at bottom right, rgba(10, 77, 44, 0.58) 0%, transparent 36%),
+                linear-gradient(135deg, #0A4D2C 0%, #F4E2A1 48%, #0F6B3E 100%);
         }
 
         [data-testid="stHeader"] {
@@ -39,9 +36,9 @@ def aplicar_css():
                     180deg,
                     rgba(10, 77, 44, 0.75) 0%,
                     rgba(15, 107, 62, 0.75) 48%,
-                    rgba(6, 54, 31, 0.75) 100%
+                    rgba(212, 160, 23, 0.75) 100%
                 ) !important;
-            border-right: 1px solid rgba(255,255,255,0.15);
+            border-right: 1px solid rgba(255,255,255,0.20);
         }
 
         [data-testid="stSidebar"] * {
@@ -57,9 +54,9 @@ def aplicar_css():
             margin: 80px auto 0 auto;
             padding: 36px;
             border-radius: 24px;
-            background: rgba(255, 255, 255, 0.92);
-            box-shadow: 0 20px 50px rgba(10, 77, 44, 0.18);
-            border: 1px solid rgba(15, 107, 62, 0.18);
+            background: rgba(255, 255, 255, 0.93);
+            box-shadow: 0 20px 50px rgba(10, 77, 44, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.55);
             text-align: center;
             backdrop-filter: blur(8px);
         }
@@ -68,7 +65,7 @@ def aplicar_css():
             display: inline-block;
             padding: 8px 14px;
             border-radius: 999px;
-            background: rgba(212, 160, 23, 0.14);
+            background: rgba(212, 160, 23, 0.20);
             color: #0A4D2C;
             font-weight: 800;
             font-size: 13px;
@@ -113,9 +110,9 @@ def aplicar_css():
         .top-card {
             padding: 28px;
             border-radius: 22px;
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid rgba(15, 107, 62, 0.15);
-            box-shadow: 0 12px 35px rgba(10, 77, 44, 0.08);
+            background: rgba(255, 255, 255, 0.93);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            box-shadow: 0 12px 35px rgba(10, 77, 44, 0.15);
             backdrop-filter: blur(8px);
         }
 
@@ -134,18 +131,18 @@ def aplicar_css():
         .page-box {
             padding: 24px;
             border-radius: 20px;
-            background: rgba(255, 255, 255, 0.92);
-            border: 1px solid rgba(15, 107, 62, 0.12);
-            box-shadow: 0 8px 25px rgba(10, 77, 44, 0.06);
+            background: rgba(255, 255, 255, 0.93);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            box-shadow: 0 8px 25px rgba(10, 77, 44, 0.12);
             backdrop-filter: blur(8px);
         }
 
         [data-testid="stMetric"] {
-            background: rgba(255, 255, 255, 0.92);
+            background: rgba(255, 255, 255, 0.93);
             padding: 18px;
             border-radius: 18px;
-            border: 1px solid rgba(15, 107, 62, 0.14);
-            box-shadow: 0 8px 20px rgba(10, 77, 44, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+            box-shadow: 0 8px 20px rgba(10, 77, 44, 0.12);
             backdrop-filter: blur(8px);
         }
 
@@ -167,13 +164,10 @@ def aplicar_css():
 def iniciar_sessao():
     if "logado" not in st.session_state:
         st.session_state.logado = False
-
     if "usuario" not in st.session_state:
         st.session_state.usuario = None
-
     if "nome_usuario" not in st.session_state:
         st.session_state.nome_usuario = None
-
     if "tipo_usuario" not in st.session_state:
         st.session_state.tipo_usuario = None
 
@@ -225,7 +219,6 @@ def tela_visao_geral():
     st.subheader("📊 Visão Geral")
 
     col1, col2, col3, col4 = st.columns(4)
-
     col1.metric("Pedigrees recebidos", "0")
     col2.metric("Em produção", "0")
     col3.metric("Finalizados", "0")
@@ -277,11 +270,7 @@ def tela_dashboard():
 
         pagina = st.radio(
             "Menu",
-            [
-                "Visão Geral",
-                "Formulário",
-                "Produção"
-            ]
+            ["Visão Geral", "Formulário", "Produção"]
         )
 
         st.markdown("---")
@@ -303,10 +292,8 @@ def tela_dashboard():
 
     if pagina == "Visão Geral":
         tela_visao_geral()
-
     elif pagina == "Formulário":
         tela_formulario()
-
     elif pagina == "Produção":
         tela_producao()
 
