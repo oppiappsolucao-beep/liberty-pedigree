@@ -20,7 +20,13 @@ def aplicar_css():
         """
         <style>
         .stApp {
-            background: #F5F7F5;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(245, 247, 245, 0.75) 0%,
+                    rgba(232, 241, 234, 0.75) 42%,
+                    rgba(213, 232, 219, 0.75) 100%
+                );
         }
 
         [data-testid="stHeader"] {
@@ -28,7 +34,14 @@ def aplicar_css():
         }
 
         [data-testid="stSidebar"] {
-            background: #0A4D2C;
+            background:
+                linear-gradient(
+                    180deg,
+                    rgba(10, 77, 44, 0.75) 0%,
+                    rgba(15, 107, 62, 0.75) 48%,
+                    rgba(6, 54, 31, 0.75) 100%
+                ) !important;
+            border-right: 1px solid rgba(255,255,255,0.15);
         }
 
         [data-testid="stSidebar"] * {
@@ -44,10 +57,11 @@ def aplicar_css():
             margin: 80px auto 0 auto;
             padding: 36px;
             border-radius: 24px;
-            background: #FFFFFF;
+            background: rgba(255, 255, 255, 0.92);
             box-shadow: 0 20px 50px rgba(10, 77, 44, 0.18);
             border: 1px solid rgba(15, 107, 62, 0.18);
             text-align: center;
+            backdrop-filter: blur(8px);
         }
 
         .login-badge {
@@ -99,9 +113,10 @@ def aplicar_css():
         .top-card {
             padding: 28px;
             border-radius: 22px;
-            background: #FFFFFF;
+            background: rgba(255, 255, 255, 0.92);
             border: 1px solid rgba(15, 107, 62, 0.15);
             box-shadow: 0 12px 35px rgba(10, 77, 44, 0.08);
+            backdrop-filter: blur(8px);
         }
 
         .top-title {
@@ -119,17 +134,19 @@ def aplicar_css():
         .page-box {
             padding: 24px;
             border-radius: 20px;
-            background: #FFFFFF;
+            background: rgba(255, 255, 255, 0.92);
             border: 1px solid rgba(15, 107, 62, 0.12);
             box-shadow: 0 8px 25px rgba(10, 77, 44, 0.06);
+            backdrop-filter: blur(8px);
         }
 
         [data-testid="stMetric"] {
-            background: #FFFFFF;
+            background: rgba(255, 255, 255, 0.92);
             padding: 18px;
             border-radius: 18px;
             border: 1px solid rgba(15, 107, 62, 0.14);
             box-shadow: 0 8px 20px rgba(10, 77, 44, 0.05);
+            backdrop-filter: blur(8px);
         }
 
         [data-testid="stMetric"] label {
