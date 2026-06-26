@@ -66,41 +66,260 @@ COLUNAS_BASE = [
 ]
 
 
-def image_to_base64(caminho):
+def img_base64(caminho):
     arquivo = Path(caminho)
     if not arquivo.exists():
         return ""
-    return base64.b64encode(arquivo.read_bytes()).decode("utf-8")
+    return base64.b64encode(arquivo.read_bytes()).decode()
 
 
 def aplicar_css():
-    logo_b64 = image_to_base64("assets/logo-liberty.png")
-    login_b64 = image_to_base64("assets/login-pet.png")
-
     st.markdown(
-        f"""
+        """
         <style>
-        :root {{
-            --verde: #0A4D2C;
-            --verde2: #0F6B3E;
-            --dourado: #D4A017;
-            --dourado2: #B88912;
-            --texto: #1F2937;
-            --cinza: #64748B;
-        }}
+        .stApp {
+            background: #f3f4f6;
+        }
 
-        .stApp {{
-            background:
-                radial-gradient(circle at top left, rgba(212, 160, 23, 0.32) 0%, transparent 28%),
-                radial-gradient(circle at bottom right, rgba(10, 77, 44, 0.45) 0%, transparent 34%),
-                linear-gradient(135deg, #F8FAF7 0%, #FFF8E1 52%, #E7F3EA 100%);
-        }}
-
-        [data-testid="stHeader"] {{
+        [data-testid="stHeader"] {
             background: transparent;
-        }}
+        }
 
-        [data-testid="stSidebar"] {{
+        .block-container {
+            padding-top: 1.5rem !important;
+            padding-bottom: 1.5rem !important;
+            max-width: 100% !important;
+        }
+
+        .login-wrapper {
+            width: 96%;
+            height: 86vh;
+            margin: 0 auto;
+            border-radius: 22px;
+            overflow: hidden;
+            background: #ffffff;
+            box-shadow: 0 20px 55px rgba(15, 23, 42, 0.14);
+            border: 1px solid rgba(15, 23, 42, 0.10);
+        }
+
+        .login-grid {
+            display: grid;
+            grid-template-columns: 46% 54%;
+            height: 100%;
+        }
+
+        .login-left {
+            background:
+                radial-gradient(circle at 12% 8%, rgba(15, 107, 62, 0.06), transparent 22%),
+                radial-gradient(circle at 88% 18%, rgba(212, 160, 23, 0.08), transparent 20%),
+                #ffffff;
+            padding: 48px 72px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .login-right {
+            position: relative;
+            min-height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
+        }
+
+        .login-right::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.22) 38%, rgba(255,255,255,0.02) 100%);
+            clip-path: ellipse(74% 100% at 0% 50%);
+            z-index: 1;
+        }
+
+        .login-right-bottom {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 34%;
+            background: rgba(255,255,255,0.92);
+            clip-path: ellipse(78% 58% at 58% 100%);
+            z-index: 2;
+        }
+
+        .security-box {
+            position: absolute;
+            bottom: 48px;
+            left: 30%;
+            right: 8%;
+            text-align: center;
+            z-index: 3;
+            color: #0A4D2C;
+        }
+
+        .security-box h2 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 900;
+            color: #0A4D2C;
+        }
+
+        .security-box p {
+            margin: 6px 0 28px 0;
+            font-size: 23px;
+            color: #0A4D2C;
+        }
+
+        .security-icons {
+            display: flex;
+            justify-content: center;
+            gap: 58px;
+        }
+
+        .security-icon {
+            font-size: 32px;
+            color: #0A4D2C;
+            line-height: 1;
+        }
+
+        .security-label {
+            margin-top: 8px;
+            color: #475569;
+            font-size: 13px;
+            line-height: 1.3;
+        }
+
+        .brand-area {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-logo {
+            width: 118px;
+            height: 118px;
+            object-fit: contain;
+            margin-bottom: 18px;
+        }
+
+        .brand-title {
+            color: #0A4D2C;
+            font-size: 52px;
+            letter-spacing: 14px;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .brand-subtitle {
+            color: #0A4D2C;
+            font-size: 23px;
+            margin-top: 6px;
+            margin-bottom: 22px;
+        }
+
+        .gold-line {
+            width: 62px;
+            height: 2px;
+            background: #D4A017;
+            margin: 0 auto 22px auto;
+        }
+
+        .login-call {
+            text-align: center;
+            color: #111827;
+            font-weight: 800;
+            font-size: 18px;
+            margin-bottom: 24px;
+        }
+
+        .login-form-area {
+            max-width: 430px;
+            margin: 0 auto;
+        }
+
+        label, .stTextInput label, .stSelectbox label, .stTextArea label, .stDateInput label {
+            color: #0A4D2C !important;
+            font-weight: 600 !important;
+        }
+
+        .stTextInput input {
+            height: 48px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+            background: #f8fafc;
+        }
+
+        div.stButton > button {
+            width: 100%;
+            height: 54px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, #064e2f 0%, #0A4D2C 100%);
+            color: #FFFFFF;
+            font-weight: 800;
+            font-size: 16px;
+            box-shadow: 0 12px 25px rgba(10, 77, 44, 0.25);
+        }
+
+        div.stButton > button:hover {
+            background: #06361f;
+            color: #FFFFFF;
+            border: none;
+        }
+
+        .forgot {
+            text-align: right;
+            color: #0A4D2C;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 28px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 24px 0;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            height: 1px;
+            background: #e5e7eb;
+            flex: 1;
+        }
+
+        .google-button {
+            height: 54px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            background: #ffffff;
+            color: #111827;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .google-icon {
+            color: #4285F4;
+            font-weight: 900;
+            font-size: 22px;
+        }
+
+        .login-footer {
+            text-align: center;
+            color: #64748B;
+            font-size: 12px;
+            margin-top: 38px;
+        }
+
+        [data-testid="stSidebar"] {
             background:
                 linear-gradient(
                     180deg,
@@ -109,229 +328,88 @@ def aplicar_css():
                     rgba(6, 54, 31, 0.92) 100%
                 ) !important;
             border-right: 1px solid rgba(255,255,255,0.20);
-        }}
+        }
 
-        [data-testid="stSidebar"] * {{
+        [data-testid="stSidebar"] * {
             color: #FFFFFF !important;
-        }}
+        }
 
-        .block-container {{
-            padding-top: 2rem !important;
-            padding-bottom: 2rem !important;
-        }}
-
-        .login-wrapper {{
-            max-width: 1480px;
-            min-height: 820px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.94);
-            border: 1px solid rgba(15, 23, 42, 0.10);
-            border-radius: 18px;
-            box-shadow: 0 26px 70px rgba(15, 23, 42, 0.12);
-            overflow: hidden;
-            display: grid;
-            grid-template-columns: 46% 54%;
-        }}
-
-        .login-left {{
-            padding: 58px 92px 40px 92px;
-            min-height: 820px;
-            position: relative;
-            background:
-                radial-gradient(circle at 18% 10%, rgba(10, 77, 44, 0.05), transparent 18%),
-                linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.92));
-        }}
-
-        .login-logo {{
-            width: 112px;
-            height: 112px;
-            object-fit: contain;
-            display: block;
-            margin: 0 auto 18px auto;
-        }}
-
-        .login-brand {{
-            text-align: center;
-            color: var(--verde);
-            font-size: 48px;
-            line-height: 1;
-            letter-spacing: 12px;
-            font-weight: 400;
-            margin-bottom: 10px;
-        }}
-
-        .login-brand-sub {{
-            text-align: center;
-            color: var(--verde);
-            font-size: 23px;
-            font-weight: 400;
-            margin-bottom: 22px;
-        }}
-
-        .login-line {{
-            width: 58px;
-            height: 2px;
-            background: var(--dourado);
-            margin: 0 auto 25px auto;
-        }}
-
-        .login-call {{
-            text-align: center;
-            color: var(--texto);
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 28px;
-        }}
-
-        .login-footer {{
-            position: absolute;
-            bottom: 36px;
-            left: 92px;
-            right: 92px;
-            color: #8A94A6;
-            font-size: 12px;
-            text-align: center;
-        }}
-
-        .login-right {{
-            min-height: 820px;
-            background-image: url("data:image/png;base64,{login_b64}");
-            background-size: cover;
-            background-position: center;
-        }}
-
-        .login-google-fake {{
-            height: 52px;
-            border: 1px solid #E5E7EB;
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 14px;
-            color: #1F2937;
-            font-weight: 600;
-            background: rgba(255,255,255,0.92);
-            margin-top: 18px;
-        }}
-
-        .login-ou {{
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            color: #6B7280;
-            font-size: 13px;
-            margin-top: 24px;
-        }}
-
-        .login-ou:before,
-        .login-ou:after {{
-            content: "";
-            flex: 1;
-            height: 1px;
-            background: #E5E7EB;
-        }}
-
-        .login-card, .top-card, .page-box {{
+        .top-card, .page-box {
             background: rgba(255, 255, 255, 0.93);
             border: 1px solid rgba(255, 255, 255, 0.55);
             box-shadow: 0 12px 35px rgba(10, 77, 44, 0.15);
             backdrop-filter: blur(8px);
-        }}
+        }
 
-        .top-card {{
+        .top-card {
             padding: 28px;
             border-radius: 22px;
-        }}
+        }
 
-        .top-title {{
+        .top-title {
             font-size: 34px;
             font-weight: 900;
             color: #0A4D2C;
             margin-bottom: 4px;
-        }}
+        }
 
-        .top-subtitle {{
+        .top-subtitle {
             color: #64748B;
             font-size: 16px;
-        }}
+        }
 
-        .page-box {{
+        .page-box {
             padding: 24px;
             border-radius: 20px;
-        }}
+        }
 
-        label, .stTextInput label, .stSelectbox label, .stTextArea label, .stDateInput label {{
-            color: #0A4D2C !important;
-            font-weight: 700 !important;
-        }}
-
-        input {{
-            border-radius: 9px !important;
-            min-height: 46px !important;
-        }}
-
-        div.stButton > button {{
-            width: 100%;
-            height: 54px;
-            border-radius: 9px;
-            border: none;
-            background: linear-gradient(135deg, #06451F 0%, #0A5A2C 100%);
-            color: #FFFFFF;
-            font-weight: 800;
-            font-size: 16px;
-            box-shadow: 0 10px 22px rgba(10, 77, 44, 0.20);
-        }}
-
-        div.stButton > button:hover {{
-            background: linear-gradient(135deg, #083B20 0%, #06451F 100%);
-            color: #FFFFFF;
-            border: none;
-        }}
-
-        [data-testid="stMetric"] {{
+        [data-testid="stMetric"] {
             background: rgba(255, 255, 255, 0.93);
             padding: 18px;
             border-radius: 18px;
             border: 1px solid rgba(255, 255, 255, 0.55);
             box-shadow: 0 8px 20px rgba(10, 77, 44, 0.12);
             backdrop-filter: blur(8px);
-        }}
+        }
 
-        [data-testid="stMetric"] label {{
+        [data-testid="stMetric"] label {
             color: #0A4D2C !important;
             font-weight: 700 !important;
-        }}
+        }
 
-        [data-testid="stMetricValue"] {{
+        [data-testid="stMetricValue"] {
             color: #0A4D2C !important;
             font-weight: 900 !important;
-        }}
+        }
 
-        @media (max-width: 980px) {{
-            .login-wrapper {{
+        @media (max-width: 900px) {
+            .login-grid {
                 grid-template-columns: 1fr;
-                min-height: auto;
-            }}
-            .login-right {{
+            }
+
+            .login-right {
                 display: none;
-            }}
-            .login-left {{
-                min-height: auto;
-                padding: 40px 28px;
-            }}
-            .login-footer {{
-                position: static;
-                margin-top: 40px;
-            }}
-            .login-brand {{
+            }
+
+            .login-left {
+                padding: 34px 24px;
+            }
+
+            .brand-title {
                 font-size: 38px;
                 letter-spacing: 8px;
-            }}
-        }}
+            }
+
+            .login-wrapper {
+                height: auto;
+                min-height: 86vh;
+            }
+        }
         </style>
         """,
         unsafe_allow_html=True
     )
+
 
 @st.cache_resource
 def conectar_google():
@@ -441,59 +519,86 @@ def fazer_logout():
 
 
 def tela_login():
-    logo_b64 = image_to_base64("assets/logo-liberty.png")
+    logo_b64 = img_base64("assets/logo-liberty.png")
+    pet_b64 = img_base64("assets/login-pet.png")
 
-    col_esq, col_dir = st.columns([0.46, 0.54], gap="large")
+    logo_html = (
+        f'<img class="brand-logo" src="data:image/png;base64,{logo_b64}">'
+        if logo_b64
+        else '<div style="font-size:70px;">🐶</div>'
+    )
 
-    st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
+    right_style = (
+        f'background-image: url("data:image/png;base64,{pet_b64}");'
+        if pet_b64
+        else 'background: linear-gradient(135deg, #e5efe8, #f8f4df);'
+    )
 
-    with col_esq:
-        st.markdown(
-            f"""
-            <div class="login-left">
-                <img src="data:image/png;base64,{logo_b64}" class="login-logo" />
-                <div class="login-brand">LIBERTY</div>
-                <div class="login-brand-sub">Pedigrees e Canis Certificados</div>
-                <div class="login-line"></div>
-                <div class="login-call">Acesse sua conta para continuar</div>
-            """,
-            unsafe_allow_html=True
-        )
+    st.markdown(
+        f"""
+        <div class="login-wrapper">
+            <div class="login-grid">
+                <div class="login-left">
+                    <div class="brand-area">
+                        {logo_html}
+                        <h1 class="brand-title">LIBERTY</h1>
+                        <div class="brand-subtitle">Pedigrees e Canis Certificados</div>
+                        <div class="gold-line"></div>
+                        <div class="login-call">Acesse sua conta para continuar</div>
+                    </div>
+                    <div class="login-form-area">
+        """,
+        unsafe_allow_html=True
+    )
 
-        usuario = st.text_input("E-mail ou CPF", placeholder="Digite seu e-mail ou CPF")
-        senha = st.text_input("Senha", placeholder="Digite sua senha", type="password")
+    usuario = st.text_input("E-mail ou CPF", placeholder="Digite seu e-mail ou CPF")
+    senha = st.text_input("Senha", placeholder="Digite sua senha", type="password")
 
-        st.markdown(
-            """
-            <div style="text-align:right; color:#0A4D2C; font-size:14px; margin-top:-4px; margin-bottom:18px;">
-                Esqueceu sua senha?
+    st.markdown('<div class="forgot">Esqueceu sua senha?</div>', unsafe_allow_html=True)
+
+    if st.button("Entrar"):
+        fazer_login(usuario, senha)
+
+    st.markdown(
+        """
+            <div class="divider">ou</div>
+            <div class="google-button">
+                <span class="google-icon">G</span>
+                <span>Entrar com Google</span>
             </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-        if st.button("Entrar"):
-            fazer_login(usuario, senha)
-
-        st.markdown(
-            """
-                <div class="login-ou">ou</div>
-                <div class="login-google-fake">
-                    <span style="font-size:22px; font-weight:900; color:#4285F4;">G</span>
-                    <span>Entrar com Google</span>
+            <div class="login-footer">
+                © 2024 Liberty Pedigrees e Canis Certificados. Todos os direitos reservados.
+            </div>
+                    </div>
                 </div>
-                <div class="login-footer">
-                    © 2024 Liberty Pedigrees e Canis Certificados. Todos os direitos reservados.
+                <div class="login-right" style='"""
+        + right_style +
+        """'>
+                    <div class="login-right-bottom"></div>
+                    <div class="security-box">
+                        <h2>Segurança e qualidade</h2>
+                        <p>para quem ama seus pets</p>
+                        <div class="security-icons">
+                            <div>
+                                <div class="security-icon">🛡️</div>
+                                <div class="security-label">Documentos<br>100% seguros</div>
+                            </div>
+                            <div>
+                                <div class="security-icon">✅</div>
+                                <div class="security-label">Processos<br>confiáveis</div>
+                            </div>
+                            <div>
+                                <div class="security-icon">🐾</div>
+                                <div class="security-label">Atendimento<br>especializado</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            """,
-            unsafe_allow_html=True
-        )
-
-    with col_dir:
-        st.markdown('<div class="login-right"></div>', unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
 
 def tela_visao_geral():
