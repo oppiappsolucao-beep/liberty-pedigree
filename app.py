@@ -4,6 +4,8 @@ import gspread
 from google.oauth2.service_account import Credentials
 from datetime import datetime
 import uuid
+import base64
+from pathlib import Path
 
 st.set_page_config(
     page_title="Liberty Pedigree",
@@ -64,145 +66,272 @@ COLUNAS_BASE = [
 ]
 
 
+def image_to_base64(caminho):
+    arquivo = Path(caminho)
+    if not arquivo.exists():
+        return ""
+    return base64.b64encode(arquivo.read_bytes()).decode("utf-8")
+
+
 def aplicar_css():
+    logo_b64 = image_to_base64("assets/logo-liberty.png")
+    login_b64 = image_to_base64("assets/login-pet.png")
+
     st.markdown(
-        """
+        f"""
         <style>
-        .stApp {
+        :root {{
+            --verde: #0A4D2C;
+            --verde2: #0F6B3E;
+            --dourado: #D4A017;
+            --dourado2: #B88912;
+            --texto: #1F2937;
+            --cinza: #64748B;
+        }}
+
+        .stApp {{
             background:
-                radial-gradient(circle at top left, rgba(212, 160, 23, 0.42) 0%, transparent 32%),
-                radial-gradient(circle at bottom right, rgba(10, 77, 44, 0.58) 0%, transparent 36%),
-                linear-gradient(135deg, #0A4D2C 0%, #F4E2A1 48%, #0F6B3E 100%);
-        }
+                radial-gradient(circle at top left, rgba(212, 160, 23, 0.32) 0%, transparent 28%),
+                radial-gradient(circle at bottom right, rgba(10, 77, 44, 0.45) 0%, transparent 34%),
+                linear-gradient(135deg, #F8FAF7 0%, #FFF8E1 52%, #E7F3EA 100%);
+        }}
 
-        [data-testid="stHeader"] {
+        [data-testid="stHeader"] {{
             background: transparent;
-        }
+        }}
 
-        [data-testid="stSidebar"] {
+        [data-testid="stSidebar"] {{
             background:
                 linear-gradient(
                     180deg,
-                    rgba(10, 77, 44, 0.85) 0%,
-                    rgba(15, 107, 62, 0.85) 48%,
-                    rgba(6, 54, 31, 0.85) 100%
+                    rgba(10, 77, 44, 0.92) 0%,
+                    rgba(15, 107, 62, 0.92) 48%,
+                    rgba(6, 54, 31, 0.92) 100%
                 ) !important;
             border-right: 1px solid rgba(255,255,255,0.20);
-        }
+        }}
 
-        [data-testid="stSidebar"] * {
+        [data-testid="stSidebar"] * {{
             color: #FFFFFF !important;
-        }
+        }}
 
-        .block-container {
+        .block-container {{
             padding-top: 2rem !important;
-        }
+            padding-bottom: 2rem !important;
+        }}
 
-        .login-card, .top-card, .page-box {
+        .login-wrapper {{
+            max-width: 1480px;
+            min-height: 820px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid rgba(15, 23, 42, 0.10);
+            border-radius: 18px;
+            box-shadow: 0 26px 70px rgba(15, 23, 42, 0.12);
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 46% 54%;
+        }}
+
+        .login-left {{
+            padding: 58px 92px 40px 92px;
+            min-height: 820px;
+            position: relative;
+            background:
+                radial-gradient(circle at 18% 10%, rgba(10, 77, 44, 0.05), transparent 18%),
+                linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.92));
+        }}
+
+        .login-logo {{
+            width: 112px;
+            height: 112px;
+            object-fit: contain;
+            display: block;
+            margin: 0 auto 18px auto;
+        }}
+
+        .login-brand {{
+            text-align: center;
+            color: var(--verde);
+            font-size: 48px;
+            line-height: 1;
+            letter-spacing: 12px;
+            font-weight: 400;
+            margin-bottom: 10px;
+        }}
+
+        .login-brand-sub {{
+            text-align: center;
+            color: var(--verde);
+            font-size: 23px;
+            font-weight: 400;
+            margin-bottom: 22px;
+        }}
+
+        .login-line {{
+            width: 58px;
+            height: 2px;
+            background: var(--dourado);
+            margin: 0 auto 25px auto;
+        }}
+
+        .login-call {{
+            text-align: center;
+            color: var(--texto);
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 28px;
+        }}
+
+        .login-footer {{
+            position: absolute;
+            bottom: 36px;
+            left: 92px;
+            right: 92px;
+            color: #8A94A6;
+            font-size: 12px;
+            text-align: center;
+        }}
+
+        .login-right {{
+            min-height: 820px;
+            background-image: url("data:image/png;base64,{login_b64}");
+            background-size: cover;
+            background-position: center;
+        }}
+
+        .login-google-fake {{
+            height: 52px;
+            border: 1px solid #E5E7EB;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            color: #1F2937;
+            font-weight: 600;
+            background: rgba(255,255,255,0.92);
+            margin-top: 18px;
+        }}
+
+        .login-ou {{
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            color: #6B7280;
+            font-size: 13px;
+            margin-top: 24px;
+        }}
+
+        .login-ou:before,
+        .login-ou:after {{
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #E5E7EB;
+        }}
+
+        .login-card, .top-card, .page-box {{
             background: rgba(255, 255, 255, 0.93);
             border: 1px solid rgba(255, 255, 255, 0.55);
             box-shadow: 0 12px 35px rgba(10, 77, 44, 0.15);
             backdrop-filter: blur(8px);
-        }
+        }}
 
-        .login-card {
-            max-width: 430px;
-            margin: 80px auto 0 auto;
-            padding: 36px;
-            border-radius: 24px;
-            text-align: center;
-        }
-
-        .login-badge {
-            display: inline-block;
-            padding: 8px 14px;
-            border-radius: 999px;
-            background: rgba(212, 160, 23, 0.20);
-            color: #0A4D2C;
-            font-weight: 800;
-            font-size: 13px;
-            margin-bottom: 14px;
-        }
-
-        .login-title {
-            font-size: 36px;
-            font-weight: 900;
-            color: #0A4D2C;
-            margin-bottom: 6px;
-        }
-
-        .login-subtitle {
-            font-size: 15px;
-            color: #64748B;
-        }
-
-        .top-card {
+        .top-card {{
             padding: 28px;
             border-radius: 22px;
-        }
+        }}
 
-        .top-title {
+        .top-title {{
             font-size: 34px;
             font-weight: 900;
             color: #0A4D2C;
             margin-bottom: 4px;
-        }
+        }}
 
-        .top-subtitle {
+        .top-subtitle {{
             color: #64748B;
             font-size: 16px;
-        }
+        }}
 
-        .page-box {
+        .page-box {{
             padding: 24px;
             border-radius: 20px;
-        }
+        }}
 
-        label, .stTextInput label, .stSelectbox label, .stTextArea label, .stDateInput label {
+        label, .stTextInput label, .stSelectbox label, .stTextArea label, .stDateInput label {{
             color: #0A4D2C !important;
             font-weight: 700 !important;
-        }
+        }}
 
-        div.stButton > button {
+        input {{
+            border-radius: 9px !important;
+            min-height: 46px !important;
+        }}
+
+        div.stButton > button {{
             width: 100%;
-            height: 46px;
-            border-radius: 12px;
+            height: 54px;
+            border-radius: 9px;
             border: none;
-            background: #D4A017;
+            background: linear-gradient(135deg, #06451F 0%, #0A5A2C 100%);
             color: #FFFFFF;
             font-weight: 800;
             font-size: 16px;
-        }
+            box-shadow: 0 10px 22px rgba(10, 77, 44, 0.20);
+        }}
 
-        div.stButton > button:hover {
-            background: #B88912;
+        div.stButton > button:hover {{
+            background: linear-gradient(135deg, #083B20 0%, #06451F 100%);
             color: #FFFFFF;
             border: none;
-        }
+        }}
 
-        [data-testid="stMetric"] {
+        [data-testid="stMetric"] {{
             background: rgba(255, 255, 255, 0.93);
             padding: 18px;
             border-radius: 18px;
             border: 1px solid rgba(255, 255, 255, 0.55);
             box-shadow: 0 8px 20px rgba(10, 77, 44, 0.12);
             backdrop-filter: blur(8px);
-        }
+        }}
 
-        [data-testid="stMetric"] label {
+        [data-testid="stMetric"] label {{
             color: #0A4D2C !important;
             font-weight: 700 !important;
-        }
+        }}
 
-        [data-testid="stMetricValue"] {
+        [data-testid="stMetricValue"] {{
             color: #0A4D2C !important;
             font-weight: 900 !important;
-        }
+        }}
+
+        @media (max-width: 980px) {{
+            .login-wrapper {{
+                grid-template-columns: 1fr;
+                min-height: auto;
+            }}
+            .login-right {{
+                display: none;
+            }}
+            .login-left {{
+                min-height: auto;
+                padding: 40px 28px;
+            }}
+            .login-footer {{
+                position: static;
+                margin-top: 40px;
+            }}
+            .login-brand {{
+                font-size: 38px;
+                letter-spacing: 8px;
+            }}
+        }}
         </style>
         """,
         unsafe_allow_html=True
     )
-
 
 @st.cache_resource
 def conectar_google():
@@ -312,25 +441,59 @@ def fazer_logout():
 
 
 def tela_login():
-    st.markdown(
-        """
-        <div class="login-card">
-            <div class="login-badge">Dashboard Operacional</div>
-            <div class="login-title">🐶 Liberty Pedigree</div>
-            <div class="login-subtitle">Acesse o painel de controle</div>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    logo_b64 = image_to_base64("assets/logo-liberty.png")
 
-    col1, col2, col3 = st.columns([1, 1.1, 1])
+    col_esq, col_dir = st.columns([0.46, 0.54], gap="large")
 
-    with col2:
-        usuario = st.text_input("Usuário")
-        senha = st.text_input("Senha", type="password")
+    st.markdown('<div class="login-wrapper">', unsafe_allow_html=True)
+
+    with col_esq:
+        st.markdown(
+            f"""
+            <div class="login-left">
+                <img src="data:image/png;base64,{logo_b64}" class="login-logo" />
+                <div class="login-brand">LIBERTY</div>
+                <div class="login-brand-sub">Pedigrees e Canis Certificados</div>
+                <div class="login-line"></div>
+                <div class="login-call">Acesse sua conta para continuar</div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        usuario = st.text_input("E-mail ou CPF", placeholder="Digite seu e-mail ou CPF")
+        senha = st.text_input("Senha", placeholder="Digite sua senha", type="password")
+
+        st.markdown(
+            """
+            <div style="text-align:right; color:#0A4D2C; font-size:14px; margin-top:-4px; margin-bottom:18px;">
+                Esqueceu sua senha?
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
         if st.button("Entrar"):
             fazer_login(usuario, senha)
+
+        st.markdown(
+            """
+                <div class="login-ou">ou</div>
+                <div class="login-google-fake">
+                    <span style="font-size:22px; font-weight:900; color:#4285F4;">G</span>
+                    <span>Entrar com Google</span>
+                </div>
+                <div class="login-footer">
+                    © 2024 Liberty Pedigrees e Canis Certificados. Todos os direitos reservados.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col_dir:
+        st.markdown('<div class="login-right"></div>', unsafe_allow_html=True)
+
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
 def tela_visao_geral():
